@@ -4,6 +4,8 @@ import ContactList from './ContactList/contactList';
 import Filter from './ContactFilter/contactFilter';
 import styles from './style.module.css';
 
+const LOCALSTORAGE_KEY = 'contacts';
+
 export class App extends Component {
   state = {
     contacts: [
@@ -14,6 +16,22 @@ export class App extends Component {
     ],
     filter: '',
   };
+  
+  componentDidMount() {
+    const afterMount = localStorage.getItem(LOCALSTORAGE_KEY);
+    const afterMountParsed = JSON.parse(afterMount);
+    if (afterMountParsed) {
+      this.setState({ contacts: afterMountParsed });
+    }
+  }
+
+  componentDidUpdate(prevState) {
+    const currentContacts = this.state.contacts;
+    const prevContacts = prevState.contacts;
+    if (prevContacts !== currentContacts) {
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(currentContacts));
+    }
+  }
 
   handleChange = event => {
     const { name, value } = event.currentTarget;
